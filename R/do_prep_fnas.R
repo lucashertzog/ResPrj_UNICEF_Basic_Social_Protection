@@ -103,7 +103,7 @@ lookup_table <- data.table(
                       "mun_out_srpr_sp_special_assets",
                       "mun_out_srpr_sp_special_other",
                       "mun_out_srpr_fed",
-                      "state_out_srpr")
+                      "state_in_srpr")
 )
 
 # Set the key for fast lookup
