@@ -119,5 +119,15 @@ fnas[, value := format(value, big.mark = ",", decimal.mark = ".", scientific = F
 # wide
 fnas_wide <- dcast(fnas, city + uf + level + size ~ description, value.var = "value")
 
+fnas_wide[, fed_out_serv_sp_basic_hrb := 11946.16]
+fnas_wide[, fed_out_serv_sp_basic_other := 121937.84]
+fnas_wide[, fed_out_progr_child_hr := 33082.13]
+fnas_wide[, fed_out_progr_child_hrb := 12662.70]
+fnas_wide[, fed_out_progr_child_other := 57104.00]
+
+# Convert relevant columns to numeric
+fnas_wide <- fnas_wide[, lapply(.SD, function(x) as.numeric(gsub(",", "", x))), 
+           .SDcols = !c("city", "uf", "level", "size")]
+
 return(fnas_wide)
 }

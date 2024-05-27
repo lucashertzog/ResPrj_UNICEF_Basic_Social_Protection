@@ -5,27 +5,29 @@ plot_all_costs <- function(
 
 foo <- dat_fnas_clean
 
-# Convert relevant columns to numeric
-foo <- foo[, lapply(.SD, function(x) as.numeric(gsub(",", "", x))), 
-           .SDcols = !c("city", "uf", "level", "size")]
-
 # Calculate municipal and federal sums
 foo[, municipal := rowSums(.SD, na.rm = TRUE), 
     .SDcols = c("mun_out_srpr_sp_basic_hr", "mun_out_srpr_sp_basic_hrb", 
                 "mun_out_srpr_sp_basic_propr", "mun_out_srpr_sp_basic_other")]
 
 foo[, federal := rowSums(.SD, na.rm = TRUE), 
-    .SDcols = c("fed_out_serv_sp_basic", "fed_out_progr_total", 
+    .SDcols = c("fed_out_serv_sp_basic_other",
+                "fed_out_serv_sp_basic_hrb",
+                "fed_out_progr_child_hr",
+                "fed_out_progr_child_hrb",
+                "fed_out_progr_child_other",
                 "fed_out_progr_covid_sp_basic")]
 
 # Create a data frame for plotting
 plot_data <- data.table(
   Level = c("Federal", "Municipal"),
-  Servicos = c(sum(foo$fed_out_serv_sp_basic,  na.rm = TRUE),
+  Servicos = c(sum(foo$fed_out_serv_sp_basic_other,  na.rm = TRUE),
                foo$mun_out_srpr_sp_basic_other),
   Instalacoes = c(0, foo$mun_out_srpr_sp_basic_propr),
-  RH = c(0, sum(foo$mun_out_srpr_sp_basic_hr, foo$mun_out_srpr_sp_basic_hrb, na.rm = TRUE)),
-  Programas = c(sum(foo$fed_out_progr_total, foo$fed_out_progr_covid_sp_basic),0)
+  RH = c(sum(foo$fed_out_progr_child_hr, foo$fed_out_progr_child_hrb,foo$fed_out_serv_sp_basic_hrb), 
+         sum(foo$mun_out_srpr_sp_basic_hr, foo$mun_out_srpr_sp_basic_hrb, na.rm = TRUE)),
+  Programas = c(sum(foo$fed_out_progr_child_other, 
+                    foo$fed_out_progr_covid_sp_basic),0)
 )
 
 # Melt the data for plotting

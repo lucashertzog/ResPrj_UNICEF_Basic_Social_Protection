@@ -7,41 +7,26 @@ dat_fnas_clean <- as.data.table(dat_fnas_clean)
 plot_data <- data.table(
   Category = c(
     "Concursados (basica)", "Contrato (basica)"
-    # , 
-    # "Concursados (especial)", "Contrato (especial)"
   ),
-  Investment = as.numeric(gsub(",", "", c(
-    dat_fnas_clean$mun_out_srpr_sp_basic_hr,
-    dat_fnas_clean$mun_out_srpr_sp_basic_hrb
-    # ,
-    # dat_fnas_clean$mun_out_srpr_sp_special_hr,
-    # dat_fnas_clean$mun_out_srpr_sp_special_hrb
-  ))),
+  Investment = c(
+    sum(dat_fnas_clean$mun_out_srpr_sp_basic_hr, dat_fnas_clean$fed_out_progr_child_hr, na.rm = TRUE),
+    sum(dat_fnas_clean$mun_out_srpr_sp_basic_hrb, dat_fnas_clean$fed_out_serv_sp_basic_hrb, dat_fnas_clean$fed_out_progr_child_hrb, na.rm = TRUE)
+  ),
   Type = factor(c(
     "Basic", "Basic"
-    # , 
-    # "Special", "Special"
-  ), levels = c("Basic"
-                # , "Special"
-                ))
+  ), levels = c("Basic"))
 )
+
 plot_data$Type <- factor(plot_data$Type, levels = c(
-  # "Special", 
   "Basic"))
 
 plot_data$Category <- factor(plot_data$Category, levels = c("Contrato (basica)","Concursados (basica)"))
 
 # Define the colors and patterns
-base_colors <- c("Concursados (basica)" = "#FFC857", "Contrato (basica)" = "#119DA4"
-                 # , 
-                 # "Concursados (especial)" = "#FFC857", "Contrato (especial)" = "#119DA4"
-                 )
+base_colors <- c("Concursados (basica)" = "#FFC857", "Contrato (basica)" = "#119DA4")
 
 # Custom fill colors for patterns
-pattern_colors <- c("Concursados (basica)" = "#4B3F72", "Contrato (basica)" = "#19647E"
-                    # ,
-                    # "Concursados (especial)" = "#4B3F72", "Contrato (especial)" = "#19647E"
-                    )
+pattern_colors <- c("Concursados (basica)" = "#4B3F72", "Contrato (basica)" = "#19647E")
 
 # Create the horizontal stacked bar plot with ggpattern
 p <- ggplot(plot_data, aes(x = Category, y = Investment, fill = Category)) +
